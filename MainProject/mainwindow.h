@@ -15,6 +15,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected slots:
+    void onButtonClicked();
+
 private:
     Ui::MainWindow *ui;
 };

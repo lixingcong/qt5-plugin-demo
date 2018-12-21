@@ -1,14 +1,68 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "../Public/interface.h"
+#include <QPluginLoader>
+#include <QDebug>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(ui->pushButton, &QPushButton::clicked,
+            this, &MainWindow::onButtonClicked);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onButtonClicked()
+{
+#if 0
+    PluginInterface *interface = nullptr;
+    QPluginLoader pluginLoader("Plugin_1.dll");
+    QObject *plugin = pluginLoader.instance();
+
+    if(plugin){
+        interface = qobject_cast<PluginInterface*>(plugin);
+        if(interface){
+            interface->SayHello();
+        }else{
+            qDebug("load pulgin ok, but invalid");
+        }
+    }else{
+        qDebug("load pulgin fail");
+    }
+#else
+    PluginInterface *interface = nullptr;
+
+    QDir pluginsDir(qApp->applicationDirPath());
+    #if defined(Q_OS_WIN)
+        if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+            pluginsDir.cdUp();
+    #endif
+        pluginsDir.cd("plugins");
+        foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+            qDebug()<<fileName;
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+
+            if(plugin){
+                interface = qobject_cast<PluginInterface*>(plugin);
+                if(interface){
+                    qDebug("load pulgin ok!!!");
+                    interface->SayHello();
+                }else{
+                    qDebug("load pulgin ok, but invalid");
+                }
+            }else{
+                qDebug("load pulgin fail");
+            }
+        }
+
+#endif
 }
