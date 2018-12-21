@@ -7,7 +7,7 @@ class PluginInterface
 {
 public:
     virtual ~PluginInterface() {}
-    virtual void SayHello(QWidget *parent) = 0;
+    virtual void SayHello() = 0;
 };
 
 #define pluginInterface_iid "io.qt.dynamicplugin"

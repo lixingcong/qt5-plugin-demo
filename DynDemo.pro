@@ -3,4 +3,5 @@ TEMPLATE = subdirs
 SUBDIRS += \
     MainProject \
     Plugin \
-    Public
+    Public \
+    Plugin_1
