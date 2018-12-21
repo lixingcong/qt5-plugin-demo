@@ -4,6 +4,7 @@
 #include <QPluginLoader>
 #include <QDebug>
 #include <QDir>
+#include <QJsonObject>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,14 +36,25 @@ void MainWindow::onButtonClicked()
     pluginsDir.cd("plugins"); // 打开程序所在目录的plugins目录
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        qDebug()<<fileName;
+        //qDebug()<<fileName;
 
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+
+        if(pluginInterface_iid != pluginLoader.metaData().value("IID").toString()){
+            qDebug()<<fileName<<"was not my own DLL!";
+            continue;
+        }
+
         QObject *plugin = pluginLoader.instance();
 
         if(plugin){
             auto interface = qobject_cast<PluginInterface*>(plugin);
             if(interface){
+                auto jsonData=pluginLoader.metaData().value("MetaData").toObject();
+
+                qDebug()<<"load ok, version="<<jsonData.value("Version").toString()<<
+                          "help="<<jsonData.value("Help").toString();
+
                 interface->SayHello();
             }else{
                 qDebug("load pulgin instance ok, but invalid");
