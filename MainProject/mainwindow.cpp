@@ -22,6 +22,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::onButtonClicked()
 {
+    // load plugins example
+    // http://doc.qt.io/qt-5/qtwidgets-tools-echoplugin-example.html
+
     QDir pluginsDir(qApp->applicationDirPath());
 
 #if defined(Q_OS_WIN)
